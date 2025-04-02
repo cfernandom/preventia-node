@@ -4,5 +4,5 @@ export const app = express()
 
 app.use(express.json())
 app.get('/ping', (_, res) => {
-    res.json({ message: 'pong' })
+  res.json({ message: 'pong' })
 })
