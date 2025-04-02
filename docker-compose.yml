@@ -21,6 +21,29 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+    profiles:
+      - prod
+
+  backend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: preventia-backend-dev
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    command: ["/bin/sh", "-c", "npx prisma generate && npm run dev"]
+    profiles:
+      - dev
 
 volumes:
   db_data:
