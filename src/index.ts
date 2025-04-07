@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+import './infrastructure/di/container'
 import { app } from './app'
 
 const PORT = process.env.PORT ?? 3000
