@@ -6,6 +6,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copiar el entrypoint y darle permisos
+COPY .docker/backend/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Copiar el resto de los archivos del proyecto
 COPY . .
 
@@ -15,5 +19,8 @@ RUN npm install -g prisma
 # Exponer el puerto de desarrollo
 EXPOSE 3000
 
-# Comando para ejecutar el servidor en desarrollo
-CMD ["npm", "run", "dev"]
+# Setear el entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Comando para ejecutar el servidor y aplicar migraciones
+CMD ["sh", "-c", "npx prisma migrate dev && npm run dev"]
