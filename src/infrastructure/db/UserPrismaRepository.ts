@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, User as PrismaUser } from '@prisma/client'
 import { IUserRepository } from '../../domain/repositories/IUserRepository'
 import { inject, injectable } from 'tsyringe'
 import { User } from '../../domain/entities/User'
@@ -9,13 +9,13 @@ export class UserPrismaRepository implements IUserRepository {
     @inject('PrismaClient') private readonly prisma: PrismaClient
   ) {}
 
-  private toDomainEntity (dbUser: any): User {
+  private toDomainEntity (dbUser: PrismaUser): User {
     return new User({
       id: dbUser.id,
       email: dbUser.email,
       passwordHash: dbUser.password_hash,
-      firstName: dbUser.first_name,
-      lastName: dbUser.last_name,
+      firstName: dbUser.first_name ?? '',
+      lastName: dbUser.last_name ?? '',
       createdAt: dbUser.created_at,
       updatedAt: dbUser.updated_at
     })
