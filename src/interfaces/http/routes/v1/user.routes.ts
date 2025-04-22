@@ -7,5 +7,6 @@ const router = Router()
 const userController = container.resolve(UserController)
 
 router.get('/me', userController.getProfile.bind(userController))
+router.put('/me', userController.updateUser.bind(userController))
 
 export default router
