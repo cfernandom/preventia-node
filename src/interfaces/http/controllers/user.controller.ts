@@ -71,4 +71,49 @@ export class UserController {
     const updatedUser = await this.userService.update(user)
     res.status(200).json(new UserUpdateResponse(updatedUser))
   }
+
+  async allUser (req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.id
+      if (userId == null) {
+        throw new UnauthorizedError('Authentication required')
+      }
+      const users = await this.userService.findAll()
+      res.status(200).json(users)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: 'Error fetching users' })
+    }
+  }
+
+  async getUserByEmail (req: Request, res: Response): Promise<void> {
+    const { email } = req.body
+    if (email === undefined || email === null) {
+      throw new ValidationError('El correo es requerido')
+    }
+
+    const user = await this.userService.findByEmail(email)
+
+    if (user === undefined || user === null) {
+      throw new NotFoundError('Usuario no encontrado')
+    }
+
+    res.status(200).json(new UserProfileResponse(user))
+  }
+
+  async getUserById (req: Request, res: Response): Promise<void> {
+    const id = req.body.id
+
+    console.log('ID:', id)
+    if (id === undefined || id === null) {
+      throw new ValidationError('ID de usuario inválido')
+    }
+
+    const user = await this.userService.findById(id)
+
+    if (user == null) {
+      throw new NotFoundError('Usuario no encontrado')
+    }
+    res.status(200).json(new UserProfileResponse(user))
+  }
 }
