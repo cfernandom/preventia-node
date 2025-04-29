@@ -81,7 +81,7 @@ export class UserController {
 
       // Parámetros de paginación
       const page = isNaN(parseInt(req.query.page as string)) ? 1 : parseInt(req.query.page as string)
-      const limit = isNaN(parseInt(req.query.limit as string)) ? 1 : parseInt(req.query.limit as string)
+      const limit = isNaN(parseInt(req.query.limit as string)) ? 20 : parseInt(req.query.limit as string)
       const offset = (page - 1) * limit
 
       const allUsers = await this.userService.findAll({ offset, limit: limit + 1 })
