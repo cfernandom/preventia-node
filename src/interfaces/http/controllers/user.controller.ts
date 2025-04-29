@@ -78,8 +78,33 @@ export class UserController {
       if (userId == null) {
         throw new UnauthorizedError('Authentication required')
       }
-      const users = await this.userService.findAll()
-      res.status(200).json(users)
+
+      // Parámetros de paginación
+      const page = isNaN(parseInt(req.query.page as string)) ? 1 : parseInt(req.query.page as string)
+      const limit = isNaN(parseInt(req.query.limit as string)) ? 1 : parseInt(req.query.limit as string)
+      const offset = (page - 1) * limit
+
+      const allUsers = await this.userService.findAll({ offset, limit: limit + 1 })
+
+      // Verifica si hay más resultados después del límite
+      const hasMore = allUsers.length > limit
+
+      // Limita los resultados al límite original
+      const users = allUsers.slice(0, limit)
+
+      // Eliminar passwordHash de cada usuario
+      const sanitizedUsers = users.map(user => {
+        const { passwordHash, ...userWithoutPassword } = user
+        return userWithoutPassword
+      })
+      res.status(200).json({
+        data: sanitizedUsers,
+        pagination: {
+          currentPage: page,
+          pageSize: limit,
+          hasMore
+        }
+      })
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'Error fetching users' })
@@ -102,7 +127,7 @@ export class UserController {
   }
 
   async getUserById (req: Request, res: Response): Promise<void> {
-    const id = req.body.id
+    const id = req.params.id
 
     console.log('ID:', id)
     if (id === undefined || id === null) {
