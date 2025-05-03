@@ -70,8 +70,12 @@ export class UserPrismaRepository implements IUserRepository {
     })
   }
 
-  async findAll (): Promise<User[]> {
-    const dbUsers = await this.prisma.user.findMany()
-    return dbUsers.map((dbUser) => this.toDomainEntity(dbUser))
+  async findAll ({ offset, limit }: { offset: number, limit: number }): Promise<User[]> {
+    const dbUsers = await this.prisma.user.findMany({
+      skip: offset,
+      take: limit,
+      orderBy: { created_at: 'desc' }
+    })
+    return dbUsers.map(this.toDomainEntity)
   }
 }

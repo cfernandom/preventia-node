@@ -2,10 +2,10 @@ import { z } from 'zod'
 
 export class User {
   readonly id: string
-  readonly email: string
-  readonly passwordHash: string
-  readonly firstName: string
-  readonly lastName: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
   readonly createdAt: Date
   updatedAt?: Date
 
